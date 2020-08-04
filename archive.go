@@ -14,8 +14,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/klauspost/compress/zstd"
-	"github.com/ulikunitz/xz/lzma"
+	"github.com/ulikunitz/xz"
 )
 
 // ReadFileFromArchive tries to read the file specified from the (compressed) archive.
@@ -83,11 +82,11 @@ func NewDecompressor(filepath string) (*Decompressor, error) {
 
 	switch path.Ext(filepath) {
 	case ".xz":
-		xz, err := lzma.NewReader(d.file)
+		xzr, err := xz.NewReader(d.file)
 		if err != nil {
 			return nil, err
 		}
-		d.reader = xz
+		d.reader = xzr
 	case ".gz":
 		gz, err := gzip.NewReader(d.file)
 		if err != nil {
@@ -125,29 +124,4 @@ func (d *Decompressor) Close() error {
 		}
 	}
 	return d.file.Close()
-}
-
-// zstDecompressor wraps the zstd.Decoder type to implement io.Closer,
-// which it unfortunately doesn't quite implement.
-type zstDecompressor struct {
-	decoder *zstd.Decoder
-}
-
-func newZstDecompressor(r io.Reader) (*zstDecompressor, error) {
-	var d zstDecompressor
-	z, err := zstd.NewReader(r)
-	if err != nil {
-		return nil, err
-	}
-	d.decoder = z
-	return &d, nil
-}
-
-func (d *zstDecompressor) Read(p []byte) (int, error) {
-	return d.decoder.Read(p)
-}
-
-func (d *zstDecompressor) Close() error {
-	d.decoder.Close()
-	return nil
 }
