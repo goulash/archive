@@ -15,7 +15,7 @@ import (
 	"path"
 
 	"github.com/klauspost/compress/zstd"
-	lzma "github.com/remyoudompheng/go-liblzma"
+	"github.com/ulikunitz/xz/lzma"
 )
 
 // ReadFileFromArchive tries to read the file specified from the (compressed) archive.
@@ -88,7 +88,6 @@ func NewDecompressor(filepath string) (*Decompressor, error) {
 			return nil, err
 		}
 		d.reader = xz
-		d.closer = xz
 	case ".gz":
 		gz, err := gzip.NewReader(d.file)
 		if err != nil {
