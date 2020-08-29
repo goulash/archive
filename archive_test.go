@@ -1,6 +1,7 @@
 package archive_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -12,13 +13,25 @@ func TestReadFileFromArchive(z *testing.T) {
 	const archivePath = "dir1/file1"
 	const archiveData = "dir1/file1 content\n"
 
-	for _, ext := range []string{".tar", ".tar.gz", ".tar.bz2", ".tar.xz"} {
-		bs, err := archive.ReadFileFromArchive(testdataPath+ext, archivePath)
+	_, err := archive.ReadFileFromArchive(testdataPath+".tar.db", archivePath)
+	fmt.Printf("expected error: %v\n", err)
+	if err == nil {
+		z.Fatalf("expected error, got nil")
+	}
+
+	for _, ext := range []string{
+		".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.zst",
+		".tar.gz.db", ".tar.bz2.db", ".tar.xz.db", ".tar.zst.db",
+	} {
+		path := testdataPath + ext
+		fmt.Printf("read archive: %s\n", path)
+		bs, err := archive.ReadFileFromArchive(path, archivePath)
 		if err != nil {
-			z.Fatalf("unexpected error: %s", err)
+			z.Errorf("%s: unexpected error: %v", path, err)
+			continue
 		}
 		if string(bs) != archiveData {
-			z.Errorf("expected data %q, got %q", archiveData, bs)
+			z.Errorf("%s: expected data %q, got %q", path, archiveData, bs)
 		}
 	}
 }
