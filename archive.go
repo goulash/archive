@@ -48,7 +48,6 @@ func ReadFileFromTar(r io.Reader, file string) ([]byte, error) {
 			return nil, err
 		}
 
-		fmt.Printf("process: %s\n", hdr.Name)
 		if hdr.Name == file {
 			bytes, err := ioutil.ReadAll(tr)
 			if err != nil {
