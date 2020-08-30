@@ -226,8 +226,8 @@ func NewDecompressor(fpath string) (*Decompressor, error) {
 			return err
 		}
 		// Success:
-		d.file.Seek(0, 0)
 		zd.Reset(d.file)
+		d.file.Seek(0, 0)
 		d.reader = zd
 		d.closer = zd.IOReadCloser()
 		return nil
