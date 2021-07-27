@@ -4,5 +4,5 @@ go 1.14
 
 require (
 	github.com/klauspost/compress v1.10.10
-	github.com/ulikunitz/xz v0.5.7
+	github.com/ulikunitz/xz v0.5.8
 )
